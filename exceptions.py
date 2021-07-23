@@ -3,3 +3,6 @@ class DataNotFoundError(Exception):
 
 class ColumnNotFoundError(Exception):
     pass
+
+class SheetFormatError(Exception):
+    pass
