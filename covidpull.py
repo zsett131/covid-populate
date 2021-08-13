@@ -13,6 +13,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
+
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 LETTERS = list(string.ascii_uppercase)
 
@@ -141,6 +142,7 @@ def process(mode, source, cases, deaths, output, counties, output_cases, output_
     procClass = mode2class.get(mode, CSVReader)
     reader = procClass(source)
     vaccineReader = None
+    vaccineValues = None
     if vaccine_source:
         vaccineReader = procClass(vaccine_source)
         vaccineData = vaccineReader.read()
@@ -171,6 +173,7 @@ def process(mode, source, cases, deaths, output, counties, output_cases, output_
         vaccinated = header.index(
             vaccinated) if not vaccine_source else vaccineHeader.index(vaccinated)
         verbose('vaccinated index: %d' % vaccinated)
+    
     sheet = authenticate()
     verbose(dir(sheet))
 
@@ -212,7 +215,7 @@ def process(mode, source, cases, deaths, output, counties, output_cases, output_
             if column in countyData.keys():
                 countyData[column]['cases'] = row[cases]
                 countyData[column]['deaths'] = row[deaths]
-                if not vaccine_source:
+                if vaccinated and not vaccine_source:
                     countyData[column]['dose1'] = row[dose1]
                     countyData[column]['full'] = row[vaccinated]
                 encountered.append(column)
